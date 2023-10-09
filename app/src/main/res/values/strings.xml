@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Demo App</string>
+    <string name="splash_msg">Image</string>
+</resources>
