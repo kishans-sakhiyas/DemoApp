@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.demoapp.model.NoteModel;
 import com.example.demoapp.model.UserModel;
 import com.example.demoapp.params.Params;
 
@@ -80,6 +81,24 @@ public class DbHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+    }
+
+    /*sort by date and time*/
+
+    public List<NoteModel> sortDate(){
+        List<NoteModel> noteModels = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String select = "select * from notes order by dt desc";
+        Cursor cursor = db.rawQuery(select, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                NoteModel noteModel = new NoteModel("");
+                noteModel.setMsg(cursor.getString(1));
+                noteModels.add(noteModel);
+            }while (cursor.moveToNext());
+        }
+        return  noteModels;
     }
 
 

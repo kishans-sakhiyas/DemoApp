@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.demoapp.data.DbHandler;
+import com.example.demoapp.model.NoteModel;
+import com.example.demoapp.model.UserModel;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +49,17 @@ public class MainActivity extends AppCompatActivity {
         btnSort = findViewById(R.id.btnSort);
 
 
+        List<NoteModel> noteModels = dbHandler.sortDate();
+        btnSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                for(NoteModel noteModel : noteModels){
+                    Log.d("sort by date", ""+ noteModel.getMsg());
+                    displaydata1();
+                }
+            }
+        });
 
         btnAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +71,24 @@ public class MainActivity extends AppCompatActivity {
         displaydata();
     }
 
+    private void displaydata1() {
+        SQLiteDatabase sqLiteDatabase = dbHandler.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from notes order by dt desc", null);
+        if (cursor.getCount() > 0) {
+            id = new int[cursor.getCount()];
+            msg = new String[cursor.getCount()];
+            int i = 0;
 
+            while (cursor.moveToNext()) {
+                id[i] = cursor.getInt(0);
+                msg[i] = cursor.getString(1);
+                i++;
+            }
+            CustAdapter custAdapter = new CustAdapter();
+
+            lv.setAdapter(custAdapter);
+        }
+    }
     private void displaydata() {
         SQLiteDatabase sqLiteDatabase = dbHandler.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("select *from notes", null);
@@ -71,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 i++;
             }
             CustAdapter custAdapter = new CustAdapter();
+
             lv.setAdapter(custAdapter);
         }
     }
